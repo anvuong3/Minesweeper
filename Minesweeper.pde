@@ -1,7 +1,7 @@
 import de.bezier.guido.*;
 //Declare and initialize constants NUM_ROWS and NUM_COLS = 20
-public final static int NUM_ROWS = 20;
-public final static int NUM_COLS = 20;
+public final static int NUM_ROWS = 5;
+public final static int NUM_COLS = 5;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> mines = new ArrayList(); //ArrayList of just the minesweeper buttons that are mined
 
@@ -41,6 +41,7 @@ public void draw ()
     background( 0 );
     if(isWon() == true)
         displayWinningMessage();
+
 }
 public boolean isWon()
 {
@@ -70,6 +71,17 @@ public int countMines(int row, int col)
 {
     int numMines = 0;
     //your code here
+    for(int i = row - 1; i <= row+1; i++){
+    for(int j = col - 1; j <= col+1; j++){
+      if(isValidOn5by5(i,j) == true && grid[i][j] == true){
+        count++;
+      }
+    }
+  }
+  if(grid[row][col] == true){
+    count--;
+  }
+  return count;
     return numMines;
 }
 public class MSButton
@@ -102,8 +114,8 @@ public class MSButton
     {    
         if (flagged)
             fill(0);
-        // else if( clicked && mines.contains(this) ) 
-        //     fill(255,0,0);
+        else if( clicked && mines.contains(this) ) 
+            fill(255,0,0);
         else if(clicked)
             fill( 200 );
         else 
