@@ -2,6 +2,7 @@ import de.bezier.guido.*;
 //Declare and initialize constants NUM_ROWS and NUM_COLS = 20
 public final static int NUM_ROWS = 20;
 public final static int NUM_COLS = 20;
+public final static int NUM_BOMBS = 50;
 private int tileCount = 0;
 private boolean lose = false;
 private MSButton[][] buttons; //2d array of minesweeper buttons
@@ -108,36 +109,50 @@ public class MSButton
     // called by manager
     public void mousePressed () 
     {
-        clicked = true;
-        //your code here
-        if(mouseButton == LEFT && !flagged)
-            clicked = true;
-
-        if(mouseButton == RIGHT && !clicked)
-            flagged = !flagged;
-        else if(!flagged && mines.contains(this))
-        {
-            displayLosingMessage();
-            noLoop();
+        if (lose == false) {
+        if (mouseButton == RIGHT && buttons[r][c].isClicked()) {}
+        else if (mouseButton == RIGHT) {marked = !marked;}
+        else if (marked == true) {}
+        else if (bombs.contains(this)) {
+          clicked = true;
+          displayLosingMessage();
         }
-        else if(clicked && countMines(myRow, myCol) > 0)
-           setLabel(countMines(myRow, myCol));
-        else
-        {
-            if(!flagged)
-                for(int r = myRow - 1; r < myRow + 2; r++)
-                    for(int c = myCol - 1; c < myCol + 2; c++)
-                        if(isValid(r, c) && !buttons[r][c].isFlagged())
+        else if (countMines(r,c) > 0) {
+          label = ""+countMines(r,c);
+          if (!clicked) {tileCount+=1;}
+          if (tileCount == 400-mines.size()) {displayWinningMessage();}
+            clicked = true;
+        }
+        else {
+
+          
+          if (!clicked) {tileCount+=1;}
+          if (tileCount == 400-bombs.size()) {displayWinningMessage();}
+          clicked = true;
+          
+                for(int r = myRow - 1; r < myRow + 2; r++){
+                    for(int c = myCol - 1; c < myCol + 2; c++){
+                        if(isValid(r, c) && !buttons[r][c].isClicked()){
                             buttons[r][c].mousePressed();
+                        }
+                    }
+                }
         }
     
+    }
 }
     public void draw () 
     {    
-        if (flagged)
+        if (marked)
             fill(0);
-        else if( clicked && mines.contains(this) ) 
-            fill(255,0,0);
+         
+         else if( !marked && clicked && bombs.contains(this) ) 
+             fill(255,0,0);
+         else if( marked && bombs.contains(this) ) 
+             fill(100);
+         else if( !marked && clicked && !bombs.contains(this) ) 
+             fill(200);
+             
         else if(clicked)
             fill( 200 );
         else 
@@ -145,7 +160,7 @@ public class MSButton
 
         rect(x, y, width, height);
         fill(0);
-        text(myLabel,x+width/2,y+height/2);
+        text(label,x+width/2,y+height/2);
     }
     public void setLabel(String newLabel)
     {
